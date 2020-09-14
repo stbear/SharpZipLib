@@ -1,0 +1,6 @@
+C:\Users\bakhuta\source\repos\SharpZipLib\ICSharpCode.SharpZipLib\bin\Release\ICSharpCode.SharpZipLib.dll
+C:\Users\bakhuta\source\repos\SharpZipLib\ICSharpCode.SharpZipLib\bin\Release\ICSharpCode.SharpZipLib.pdb
+C:\Users\bakhuta\source\repos\SharpZipLib\ICSharpCode.SharpZipLib\obj\Release\ICSharpCode.SharpZipLib.dll
+C:\Users\bakhuta\source\repos\SharpZipLib\ICSharpCode.SharpZipLib\obj\Release\ICSharpCode.SharpZipLib.pdb
+C:\Users\bakhuta\source\repos\SharpZipLib\ICSharpCode.SharpZipLib\obj\Release\ICSharpCode.SharpZipLib.csprojAssemblyReference.cache
+C:\Users\bakhuta\source\repos\SharpZipLib\ICSharpCode.SharpZipLib\obj\Release\ICSharpCode.SharpZipLib.csproj.CoreCompileInputs.cache

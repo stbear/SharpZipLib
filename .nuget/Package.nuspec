@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>SharpZipLib</id>
+    <version>1.0.0.1</version>
+    <authors>SharpZipLib authors</authors>
+    <owners>SharpZipLib authors</owners>
+    <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
+    <projectUrl>https://github.com/icsharpcode/SharpZipLib</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>SharpZipLib</description>
+    <releaseNotes>Removed AES encryption, downgraded to .Net 4.0</releaseNotes>
+    <copyright>SharpZipLib Authors</copyright>
+    <tags>SharpZipLib</tags>
+	<dependencies>
+    </dependencies>
+  </metadata>
+</package>
