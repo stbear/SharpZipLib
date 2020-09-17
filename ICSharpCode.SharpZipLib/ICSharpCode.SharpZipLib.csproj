@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ICSharpCode.SharpZipLib</RootNamespace>
-    <AssemblyName>ICSharpCode.SharpZipLib</AssemblyName>
+    <AssemblyName>SharpZipLib</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
