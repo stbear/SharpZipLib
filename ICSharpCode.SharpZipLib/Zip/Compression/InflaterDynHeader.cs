@@ -1,7 +1,7 @@
+using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 
 namespace ICSharpCode.SharpZipLib.Zip.Compression
 {
@@ -114,8 +114,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 			if (codeLengths[256] == 0)
 				throw new StreamDecodingException("Inflater dynamic header end-of-block code missing");
 
-			litLenTree = new InflaterHuffmanTree(new ArraySegment<byte>(codeLengths, 0, litLenCodeCount).Array.ToList());
-			distTree = new InflaterHuffmanTree(new ArraySegment<byte>(codeLengths, litLenCodeCount, distanceCodeCount).Array.ToList());
+			litLenTree = new InflaterHuffmanTree(codeLengths.Take(litLenCodeCount).ToArray());
+			distTree = new InflaterHuffmanTree(codeLengths.Skip(litLenCodeCount).Take(distanceCodeCount).ToArray());
 
 			yield return true;
 		}

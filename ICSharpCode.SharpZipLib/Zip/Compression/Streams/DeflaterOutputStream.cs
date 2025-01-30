@@ -1,7 +1,10 @@
+using ICSharpCode.SharpZipLib.Encryption;
 using System;
 using System.IO;
 using System.Security.Cryptography;
-using ICSharpCode.SharpZipLib.Encryption;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 {
@@ -105,10 +108,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 					break;
 				}
 
-				if (cryptoTransform_ != null)
-				{
-					EncryptBlock(buffer_, 0, len);
-				}
+				EncryptBlock(buffer_, 0, len);
 
 				baseOutputStream_.Write(buffer_, 0, len);
 			}
@@ -149,36 +149,17 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 
 		#region Encryption
 
-		private string password;
-
-		private ICryptoTransform cryptoTransform_;
-
 		/// <summary>
-		/// Returns the 10 byte AUTH CODE to be appended immediately following the AES data stream.
+		/// The CryptoTransform currently being used to encrypt the compressed data.
 		/// </summary>
-		protected byte[] AESAuthCode;
+		protected ICryptoTransform cryptoTransform_;
 
-		/// <summary>
-		/// Get/set the password used for encryption.
-		/// </summary>
-		/// <remarks>When set to null or if the password is empty no encryption is performed</remarks>
-		public string Password
-		{
-			get
-			{
-				return password;
-			}
-			set
-			{
-				if ((value != null) && (value.Length == 0))
-				{
-					password = null;
-				}
-				else
-				{
-					password = value;
-				}
-			}
+		/// <inheritdoc cref="StringCodec.ZipCryptoEncoding"/>
+		public Encoding ZipCryptoEncoding {
+			get => _stringCodec.ZipCryptoEncoding;
+			set {
+				_stringCodec = _stringCodec.WithZipCryptoEncoding(value);
+			} 
 		}
 
 		/// <summary>
@@ -195,18 +176,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		/// </param>
 		protected void EncryptBlock(byte[] buffer, int offset, int length)
 		{
+		    if(cryptoTransform_ is null) return;
 			cryptoTransform_.TransformBlock(buffer, 0, length, buffer, 0);
-		}
-
-		/// <summary>
-		/// Initializes encryption keys based on given <paramref name="password"/>.
-		/// </summary>
-		/// <param name="password">The password.</param>
-		protected void InitializePassword(string password)
-		{
-			var pkManaged = new PkzipClassicManaged();
-			byte[] key = PkzipClassic.GenerateKeys(ZipStrings.ConvertToArray(password));
-			cryptoTransform_ = pkManaged.CreateEncryptor(key, null);
 		}
 
 		#endregion Encryption
@@ -219,11 +190,9 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		/// are processed.
 		/// </summary>
 		protected void Deflate()
-		{
-			Deflate(false);
-		}
+			=> DeflateSync(false);
 
-		private void Deflate(bool flushing)
+		private void DeflateSync(bool flushing)
 		{
 			while (flushing || !deflater_.IsNeedingInput)
 			{
@@ -233,10 +202,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 				{
 					break;
 				}
-				if (cryptoTransform_ != null)
-				{
-					EncryptBlock(buffer_, 0, deflateCount);
-				}
+
+				EncryptBlock(buffer_, 0, deflateCount);
 
 				baseOutputStream_.Write(buffer_, 0, deflateCount);
 			}
@@ -358,13 +325,13 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		}
 
 		/// <summary>
-		/// Flushes the stream by calling <see cref="DeflaterOutputStream.Flush">Flush</see> on the deflater and then
+		/// Flushes the stream by calling <see cref="Flush">Flush</see> on the deflater and then
 		/// on the underlying stream.  This ensures that all bytes are flushed.
 		/// </summary>
 		public override void Flush()
 		{
 			deflater_.Flush();
-			Deflate(true);
+			DeflateSync(true);
 			baseOutputStream_.Flush();
 		}
 
@@ -450,13 +417,9 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 
 		private bool isClosed_;
 
+		/// <inheritdoc cref="StringCodec"/>
+		protected StringCodec _stringCodec = ZipStrings.GetStringCodec();
+
 		#endregion Instance Fields
-
-		#region Static Fields
-
-		// Static to help ensure that multiple files within a zip will get different random salt
-		private static RandomNumberGenerator _aesRnd = RandomNumberGenerator.Create();
-
-		#endregion Static Fields
 	}
 }
